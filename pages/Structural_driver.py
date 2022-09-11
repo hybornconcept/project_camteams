@@ -3,7 +3,6 @@ import streamlit as st  # pip install streamlit
 import geocoder
 import datetime
 import re
-from PIL import Image
 import time
 from tools.database import insert_driver
 import glob
