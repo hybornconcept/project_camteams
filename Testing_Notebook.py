@@ -190,14 +190,14 @@ with st.form(key="entry_form", clear_on_submit=True):
         progress()
 
 
-# -----------Logo------------------
-img1, img2 = st.columns(2)
+# # -----------Logo------------------
+# img1, img2 = st.columns(2)
 
-# image1 = Image.open('ecews.jpg')
+# # image1 = Image.open('ecews.jpg')
 
-files = [file for file in glob.glob("tools\images\*")]
+# files = [file for file in glob.glob("tools\images\*")]
 
-image1 = files[0]
-image2 = files[1]
-img1.image(image1)
-img2.image(image2)
+# image1 = files[0]
+# image2 = files[1]
+# img1.image(image1)
+# img2.image(image2)
