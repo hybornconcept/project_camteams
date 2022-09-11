@@ -3,7 +3,6 @@ import geocoder
 from datetime import datetime
 import streamlit as st  # pip install streamlit
 import time
-
 import glob
 import json
 from tools.database import insert_deta
