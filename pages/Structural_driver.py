@@ -3,10 +3,10 @@ import streamlit as st  # pip install streamlit
 import geocoder
 import datetime
 import re
+from PIL import Image
 import time
 from tools.database import insert_driver
 import glob
-from PIL import Image
 
 page_title = "CAM TOOL"
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
@@ -107,14 +107,9 @@ img1, img2 = st.columns(2)
 
 # image1 = glob.glob("tools\ecews.jpg")
 # image2 = glob.glob("tools\usaid_2.jpg")
-image1 = Image.open(
-    'https://drive.google.com/file/d/111jLG4GVoPOTZbs8iWektwthOHqUTrgm/view?usp=sharing')
-image2 = Image.open(
-    'https://drive.google.com/file/d/1ywGGxKAlqgIEfMyIoENQtBrE7WIWavTe/view?usp=sharing')
+files = [file for file in glob.glob("tools\images\*")]
 
-# files = [file for file in glob.glob("tools\images\*")]
-
-# image1 = files[0]
-# image2 = files[1]
+image1 = files[0]
+image2 = files[1]
 img1.image(image1)
 img2.image(image2)
