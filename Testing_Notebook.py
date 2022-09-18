@@ -203,14 +203,14 @@ with st.form(key="entry_form", clear_on_submit=True):
         insert_deta(str(timestamp), str(ip), location2, result)
         progress()
 
-imgcol1, imgcol2 = st.columns(2)
-files = [file for file in glob.glob("tools\images\*")]
+# imgcol1, imgcol2 = st.columns(2)
+# files = [file for file in glob.glob("tools\images\*")]
 
 
-img1 = files[0]
-img2 = files[1]
-with imgcol1:
-    st.image(img1)
+# img1 = files[0]
+# img2 = files[1]
+# with imgcol1:
+#     st.image(img1)
 
-with imgcol2:
-    st.image(img2)
+# with imgcol2:
+#     st.image(img2)
