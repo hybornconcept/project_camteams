@@ -1,12 +1,10 @@
-from datetime import datetime
 import streamlit as st  # pip install streamlit
-import geocoder
-import datetime
-import re
-from PIL import Image
-import time
-from tools.database import insert_driver
 import glob
+from streamlit_js_eval import get_geolocation
+import time
+import socket
+from tools.database import insert_driver
+
 
 page_title = "CAM TOOL"
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
@@ -16,26 +14,27 @@ layout = "centered"
 
 
 st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
-
+st.markdown("""<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+ integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">""", unsafe_allow_html=True)
 
 # -----styling---------
 hide_st_style = """
             <style>
+
             img{height:75px;width:1500px;}
+            img{height:75px;width:1500px;}
+        div.row-widget.css-k008qs.epcbefy2{margin-left: 8%;}
+        button.css-1q8dd3e.edgvbvh5{
+        padding:2% 30%;}
+        div.css-ocqkz7.e1tzin5v4 {
+        border: 0.1rem solid #586E75;
+        border-radius:10px;
+        padding: 20px 30px;}
+
             </style>
+
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
-
-# --------------- Location------------
-
-
-def get_location():
-    loc = []
-    location = geocoder.ip('me')
-    loc.append(location.latlng[0])
-    loc.append(location.latlng[1])
-    return loc
-# -----progress bar-------------------
 
 
 def progress():
@@ -48,68 +47,132 @@ def progress():
 
 # -------------- SETTINGS --------------
 collections = {
-    'cam_teams': ["-", "Akamkpa 1", "Akpabuyo 1", "Bakassi", "Ikom-Etung", "Akamkpa 2", "Akpabuyo 2", "Calabar South",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Calabar Municipal 1", "Calabar Municipal 2", "Odukpani 1", "Odukpani 2"],
-    'structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
-                          "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
-    'longitude': '',
-    'latitude': '',
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom-Etung", "Akamkpa2",    "Akpabuyo", "Calabar South",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal 2", "Odukpani 1"],
+    'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
+                                  "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
+    'name_of_structural_driver': '',
+    'residence_area': ['-', 'Urban', 'Rural'],
+    'client_load': '',
+
     'focal_person': '',
+    'phone_number': '',
+    'entry': ['-', 'Retrospective', 'Current'],
     'address': '',
-
-
+    'longitude': '',
+    'latitude': ''
 }
 
 
-def is_empty_or_blank(msg):
+location = get_geolocation('Get location')
+
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.254.254.254', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+
+def is_not_a_word(word):
     """ This function checks if given string is empty
      or contain only shite spaces"""
-    return re.search("^\s*$", msg)
+    list = '!@#$%^&*()-+?_=,<>/'
+    if (word.strip() == '' or word in list):
+        return True
 
 
 st.header(f"Structural Drivers Notebook")
-with st.form("entry_form"):
-    col1, col2 = st.columns(2)
-    col1.selectbox("Select the CAM Team:",
-                   collections['cam_teams'], key="cam_teams")
-    col2.selectbox("Select Type of Structural Driver:",
-                   collections['structural_driver'], key="structural_driver")
 
-    col1.number_input("Enter the Longitude:", key="longitude",
-                      value=0.001, step=0.001)
-    col2.number_input("Enter the Latitude:", key="latitude",
-                      value=0.001, step=0.001)
-    focal_person = st.text_input(
-        "Full name of focal person", key="focal_person", placeholder="John Doe")
-    address = st.text_area(
-        "", placeholder="Please provide a descriptive address ...", key="address")
+main_container = st.container()
+
+with st.form(key="entry_form", clear_on_submit=True):
+    with main_container:
+
+        col1, col2 = st.columns(2)
+        col1.selectbox("Select your CAM Team:",
+                       collections['cam_teams'], key="cam_teams")
+        col2.selectbox("Type of Structural Driver:",
+                       collections['type_of_structural_driver'], key="type_of_structural_driver")
+
+        col1.text_input("Name of Structural Driver",
+                        key="name_of_structural_driver")
+        col2.selectbox("Residence Area:",
+                       collections['residence_area'], key="residence_area")
+        col1.number_input("Monthly average Client load", step=1,
+                          min_value=0, key="client_load")
+
+        col2.text_input(
+            "Full name of focal person", key="focal_person", placeholder="John Doe")
+        col1.text_input(
+            "Phone No. of focal person", key="phone_number", placeholder="080xxxxxxxx")
+
+        col2.selectbox("Type of entry", collections['entry'], key="entry")
+        st.text_area(
+            "", placeholder="Descriptive address of the structural Driver ...", key="address")
+
+        placeholder = st.empty()
+        if str(st.session_state["entry"]) == "Retrospective":
+            with placeholder.container():
+                pos1, pos2 = st.columns(2)
+                pos1.number_input("GPS coordinate, Longitude:",
+                                  key="longitude", value=0.000)
+                pos2.number_input("GPS coordinate, Lattitude:", key="latitude",
+                                  value=0.000)
 
     submitted = st.form_submit_button("Submit Response")
 
     if submitted:
-        hotspots = {key: st.session_state[key]
-                    for key in list(collections.keys())}
+        # ----------------- Validatation-----------------------------
+        if str(st.session_state["entry"]) != "Retrospective":
+            hotspots = {key: str(st.session_state[key]) if i < 9 else "" for i, key in enumerate(
+                list(collections.keys()))}
 
-        for key, value in hotspots.items():
-            if (bool(value) == False or len(str(value)) <= 1 or str(value)[0] == '0'):
-                st.error("The input for " + key.upper() +
-                         " is Incorrect or Empty")
+            for key in list(collections.keys())[:8]:
+
+                if (is_not_a_word(str(st.session_state[key]))):
+                    st.error("The input for " + key.upper() +
+                             " is Incorrect or Empty")
+                    st.stop()
+                if key == "phone_number":
+                    if (len(str(st.session_state[key])) != 11 or not(st.session_state[key].isdigit())):
+                        st.error("The input for " + key.upper() +
+                                 " is Incorrect or Empty")
+                        st.stop()
+                if key == "client_load":
+                    if (len(str(st.session_state[key])) < 2 and int(st.session_state[key] == 0)):
+                        st.error("The input for " + key.upper() +
+                                 " is Incorrect or Empty")
+                        st.stop()
+        if str(st.session_state["entry"]) == "Retrospective":
+            if (int(st.session_state["longitude"]) == 0 or int(st.session_state["latitude"]) == 0):
+                st.error("The input for Latitude/Longitude is Incorrect or Empty")
                 st.stop()
-
-        timestamp = str(datetime.datetime.now())
-        location = get_location()
-        insert_driver(timestamp, location, hotspots)
+            else:
+                hotspots = {key: str(st.session_state[key])
+                            for key in list(collections.keys())}
+    # -------------------Submission-----------------------
+        ip = get_ip()
+        timestamp = location["timestamp"]
+        location2 = location['coords']
+        insert_driver(str(timestamp), str(ip), location2, hotspots)
         progress()
 
-# -----------Logo------------------
-# img1, img2 = st.columns(2)
+imgcol1, imgcol2 = st.columns(2)
+files = [file for file in glob.glob("tools\images\*")]
 
 
-# # image1 = glob.glob("tools\ecews.jpg")
-# # image2 = glob.glob("tools\usaid_2.jpg")
-# files = [file for file in glob.glob("tools\images\*")]
+img1 = files[0]
+img2 = files[1]
+with imgcol1:
+    st.image(img1)
 
-# image1 = files[0]
-# image2 = files[1]
-# img1.image(image1)
-# img2.image(image2)
+with imgcol2:
+    st.image(img2)

@@ -1,35 +1,15 @@
-
-import geocoder
 from datetime import datetime
 import streamlit as st  # pip install streamlit
 import time
-from PIL import Image
 import glob
-import json
+import socket
 from tools.database import insert_deta
-
+from streamlit_js_eval import streamlit_js_eval, copy_to_clipboard, create_share_link, get_geolocation
 
 # --------------- PAGE SETTINGS------------
 page_title = "CAM TOOL"
 page_icon = ":blue_book:"  # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 layout = "centered"
-
-
-def get_location():
-    loc = []
-    location = geocoder.ip('me')
-    loc.append(location.latlng[0])
-    loc.append(location.latlng[1])
-    return loc
-
-
-def progress():
-    my_bar = st.progress(0)
-    for p in range(100):
-        time.sleep(0.1)
-        my_bar.progress(p+1)
-    st.success("Response Submitted Successfully")
-
 
 # ------------STYLING--------------------------
 st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
@@ -48,41 +28,78 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# -------------- SETTINGS --------------
-listed = ["---", "No", "Yes"]
-data = {
-    'cam_teams': ["---", "Akamkpa 1", "Akpabuyo 1", "Bakassi", "Ikom-Etung", "Akamkpa 2", "Akpabuyo 2", "Calabar South",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Calabar Municipal 1", "Calabar Municipal 2", "Odukpani 1", "Odukpani 2"],
-    'structural_driver': ["---", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
-                          "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
-    'DOB': '',
-    'testing_modality': ["---", "Social Network Testing", "Sexual Network Testing", "Geneology Testing", "Self-Testing (HIVST)",
-                         "Targetted Testing", "Voluntary Counselling Testing (VCT)", "PMTCT Testing"],
-    'sex': ["---", "Male", "Female"],
-    'risk_level': ["---", "High", "Low"],
-    'PrEP': listed,
-    'accepted_ict': listed,
-    'elicited': "",
-    'test_result': ["---", "Negative", "Positive"],
 
-    # ---------
+# ----------------------------------------------------------------Get Geolocation--------------------------
+location = get_geolocation('Get location')
+
+# ----------------------------------------------------------------Get IP--------------------------
+
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.254.254.254', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+# ----------------------------------------------------------------REMOVE BLANK AND NONE WORD--------------------------
+
+
+def is_not_a_word(word):
+    """ This function checks if given string is empty
+     or contain only shite spaces"""
+    list = '!@#$%^&*()-+?_=,<>/'
+    if (word.strip() == '' or word in list):
+        return True
+
+
+def progress():
+    my_bar = st.progress(0)
+    for p in range(100):
+        time.sleep(0.1)
+        my_bar.progress(p+1)
+    st.success("Response Submitted Successfully")
+
+
+# -------------- SETTINGS --------------
+listed = ["-", "No", "Yes"]
+data = {
+    'cam_teams': ["-", "Akamkpa 1", "Akpabuyo 1", "Bakassi", "Ikom-Etung", "Akamkpa 2", "Akpabuyo 2", "Calabar South",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Calabar Municipal 1", "Calabar Municipal 2", "Odukpani 1", "Odukpani 2"],
+    'structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
+                          "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
+    'date_of_birth': '',
+    'testing_modality': ["-", "Social Network Testing", "Sexual Network Testing", "Geneology Testing", "Self-Testing (HIVST)",
+                         "Targetted Testing", "Voluntary Counselling Testing (VCT)", "PMTCT Testing"],
+    'sex': ["-", "Male", "Female"],
+    'risk_level': ["-", "High", "Low"],
+
+    'elicited': "",
+    'test_result': ["-", "Negative", "Positive"],
+
+    # ---
     'client_code': '',
     'phone': '',
-    'last_test': ["---", "<1 month", "1-3 months", "4-6 months", "> 6 months"],
-    'residence_State': '',
-    'education_level': ["---", "Not Educated", "Primary",
-                        "Secondary", "Tertiary", "Post-Graduate"],
-    'marital_status': ["---", "Married", "Single", "Divorced",
-                       "Widowed", "Seperated", "Cohabiting", "Others"],
-    'linked': listed,
 
-    'recency_test': listed,
-    'vaccinated': listed,
-    'recency_status': ["---", "Recent Infection", "Long-Term Infection"],
-    'income_level': ['less than #30,000', 'btw #30,000- #100,000', 'btw #100,000- #500,000', '#500,000 and above'],
+
     'residence_LGA': '',
+    'last_test': ["-", "<1 month", "1-3 months", "4-6 months", "> 6 months"],
     'occupation': '',
+    'education_level': ["-", "Not Educated", "Primary",
+                        "Secondary", "Tertiary", "Post-Graduate"],
+    'marital_status': ["-", "Married", "Single", "Divorced",
+                       "Widowed", "Seperated", "Cohabiting", "Others"],
+    'vaccinated': listed,
+    'linked': listed,
+    'income_level': ['less than #30,000', 'btw #30,000- #100,000', 'btw #100,000- #500,000', '#500,000 and above'],
     'No_of_child_enumerated': '',
+    'recency_status': ["-", "Not Done", "Recent Infection", "Long-Term Infection"],
     'address': '',
     'med_history_comements': '',
 }
@@ -102,19 +119,18 @@ with st.form(key="entry_form", clear_on_submit=True):
                        data['structural_driver'], key="structural_driver")
         col1.date_input(
             "Select date of birth",
-            datetime.now(), key="DOB")
+            datetime.now(), key="date_of_birth")
 
         col2.selectbox("Select Testing Modality:",
                        data['testing_modality'], key="testing_modality")
         col1.selectbox("Select the Sex:", data['sex'], key="sex")
         col2.selectbox("Select Risk Level of Client:",
                        data['risk_level'], key="risk_level")
-        col1.selectbox("Is Client on PrEP ?:",
-                       data['PrEP'], key="PrEP")
-        col2.selectbox("Accepted Index Testing ?",
-                       data['accepted_ict'], key="accepted_ict")
-        col1.number_input("No.of Partners Elicited", value=-1, step=1, min_value=-1, max_value=30,
+
+        col1.number_input("No.of Social Networks/ Partners Elicited", value=0, step=1, min_value=0,
                           key='elicited')
+# social networks offered yes/no
+# social networks offered numbers
 
         col2.selectbox("Select Test result:",
                        data['test_result'], key="test_result")
@@ -128,30 +144,27 @@ with st.form(key="entry_form", clear_on_submit=True):
                 pos1.text_input("Client code", key="client_code")
                 pos2.text_input("Client's Phone Number",
                                 key="phone", placeholder="e.g. 080xxxxxxxx")
-                pos1.text_input(
-                    "State of Residence", key="residence_State", placeholder="e.g. Cross river")
-                pos2.text_input("LGA of Residence",
+                pos1.text_input("LGA of Residence",
                                 key="residence_LGA", placeholder="e.g. Abi")
-                pos1.selectbox("Last HIV Negative Result:",
+                pos2.selectbox("Last HIV Negative Result:",
                                data['last_test'], key="last_test")
-                pos2.text_input("Client's Occupation",
+                pos1.text_input("Client's Occupation",
                                 key='occupation', placeholder="e.g Fisherman")
-                pos1.selectbox("Client's Education Level:",
+                pos2.selectbox("Client's Education Level:",
                                data['education_level'], key="education_level")
-                pos2.selectbox("Client's Marital Status:",
+                pos1.selectbox("Client's Marital Status:",
                                data["marital_status"], key="marital_status")
-                pos1.selectbox("Is the Client Vacinnated for Covid-19 ?",
-                               data['vaccinated'], key="vaccinated")
-                pos2.selectbox("Was Client Linked to Care ?",
-                               data['linked'], key="linked")
-                pos1.selectbox(
+                pos2.selectbox(
                     "Income Level", data['income_level'], key="income_level")
 
-                pos2.number_input("No. of Children Enumerated", value=-1, step=1, min_value=-1, max_value=30,
+                pos1.selectbox("Was Client Linked to Care ?",
+                               data['linked'], key="linked")
+                pos2.selectbox("Is the Client Vacinnated for Covid-19 ?",
+                               data['vaccinated'], key="vaccinated")
+
+                pos1.number_input("No. of Children Enumerated", value=0, step=1, min_value=0,
                                   key='No_of_child_enumerated')
 
-                pos1.selectbox("Recency Testing done?",
-                               data['recency_test'], key="recency_test")
                 pos2.selectbox("Recency Testing result",
                                data['recency_status'], key="recency_status")
                 pos1.text_area(
@@ -166,10 +179,10 @@ with st.form(key="entry_form", clear_on_submit=True):
         # ----------------- Validate if Negative-----------------------------
         if str(st.session_state["test_result"]) != "Positive":
 
-            result = {key: str(st.session_state[key]) if i < 10 else "" for i, key in enumerate(
+            result = {key: str(st.session_state[key]) if i < 8 else "" for i, key in enumerate(
                 list(data.keys()))}
-            for key in list(result.keys())[:10]:
-                if (st.session_state[key] == '---' or str(st.session_state[key]) == todays_date or str(st.session_state[key]) in ['-1', '-0', '-']):
+            for key in list(result.keys())[:8]:
+                if (is_not_a_word(str(st.session_state[key])) or str(st.session_state[key]) == todays_date):
                     st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                     st.stop()
@@ -177,27 +190,27 @@ with st.form(key="entry_form", clear_on_submit=True):
         else:
             result = {key: str(st.session_state[key])
                       for key in list(data.keys())}
-            for key in list(result.keys())[:24]:
-                if (bool(st.session_state[key]) == False or st.session_state[key] == '---' or str(st.session_state[key]) == todays_date or str(st.session_state[key]) in ['-1', '-0', '-']):
+            for key in list(result.keys()):
+                if (is_not_a_word(str(st.session_state[key])) or str(st.session_state[key]) == todays_date):
                     st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                     st.stop()
-        # -----------------Submit everything--------------------------
-        location = json.dumps(get_location())
-        dateTimeObj = datetime.now()
-        timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
-        insert_deta(timestampStr, location, result)
+
+        # -------------------Submission-----------------------
+        ip = get_ip()
+        timestamp = location["timestamp"]
+        location2 = location['coords']
+        insert_deta(str(timestamp), str(ip), location2, result)
         progress()
 
+imgcol1, imgcol2 = st.columns(2)
+files = [file for file in glob.glob("tools\images\*")]
 
-# # -----------Logo------------------
-# img1, img2 = st.columns(2)
 
-# # image1 = Image.open('ecews.jpg')
+img1 = files[0]
+img2 = files[1]
+with imgcol1:
+    st.image(img1)
 
-# files = [file for file in glob.glob("tools\images\*")]
-
-# image1 = files[0]
-# image2 = files[1]
-# img1.image(image1)
-# img2.image(image2)
+with imgcol2:
+    st.image(img2)
