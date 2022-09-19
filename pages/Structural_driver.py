@@ -30,7 +30,10 @@ hide_st_style = """
         border: 0.1rem solid #586E75;
         border-radius:10px;
         padding: 20px 30px;}
-
+        div.css-zt5igj.e16nr0p32{margin-top:-10%;}
+        div.css-zt5igj.e16nr0p32{margin-bottom:-17%;}
+        div.css-14xtw13.e8zbici0{display:None}
+        footer.css-1lsmgbg.egzxvld0{display:None}
             </style>
 
             """

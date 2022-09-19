@@ -1,10 +1,9 @@
 from datetime import datetime
 import streamlit as st  # pip install streamlit
 import time
-import glob
 import socket
 from tools.database import insert_deta
-from streamlit_js_eval import streamlit_js_eval, copy_to_clipboard, create_share_link, get_geolocation
+from streamlit_js_eval import get_geolocation
 
 # --------------- PAGE SETTINGS------------
 page_title = "CAM TOOL"
@@ -16,7 +15,7 @@ st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
 # --- HIDE STREAMLIT STYLE ---
 hide_st_style = """
             <style>
-            img{height:75px;width:1500px;}
+        img{height:75px;width:1500px;}
         div.row-widget.css-k008qs.epcbefy2{margin-left: 8%;}
         button.css-1q8dd3e.edgvbvh5{
         padding:2% 30%;}
@@ -24,6 +23,10 @@ hide_st_style = """
         border: 0.1rem solid #586E75;
         border-radius:10px;
         padding: 20px 30px;}
+        div.css-zt5igj.e16nr0p32{margin-top:-10%;}
+        div.css-zt5igj.e16nr0p32{margin-bottom:-15%;}
+        div.css-14xtw13.e8zbici0{display:None}
+        footer.css-1lsmgbg.egzxvld0{display:None}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
@@ -70,10 +73,10 @@ def progress():
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 data = {
-    'cam_teams': ["-", "Akamkpa 1", "Akpabuyo 1", "Bakassi", "Ikom-Etung", "Akamkpa 2", "Akpabuyo 2", "Calabar South",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Calabar Municipal 1", "Calabar Municipal 2", "Odukpani 1", "Odukpani 2"],
-    'structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
-                          "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom-Etung", "Akamkpa2",    "Akpabuyo", "Calabar South",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal 2", "Odukpani 1"],
+    'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
+                                  "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'date_of_birth': '',
     'testing_modality': ["-", "Social Network Testing", "Sexual Network Testing", "Geneology Testing", "Self-Testing (HIVST)",
                          "Targetted Testing", "Voluntary Counselling Testing (VCT)", "PMTCT Testing"],
