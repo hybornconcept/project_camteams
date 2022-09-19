@@ -10,6 +10,8 @@ db = deta.Base("case_db")
 
 db2 = deta.Base("drivers_db")
 
+db3 = deta.Base("pmtct_eid_db")
+
 
 def insert_deta(timestamp2, ip, location2, result):
     """Returns the report on a successful creation, otherwise raises an error"""
@@ -19,3 +21,8 @@ def insert_deta(timestamp2, ip, location2, result):
 def insert_driver(timestamp, ip, location2, hotspots):
     """Returns the report on a successful creation, otherwise raises an error"""
     return db2.put({"key": timestamp, "ip": ip,  "hotspots": location2, "result": hotspots})
+
+
+def insert_eid(timestamp, ip, location2, eid_response):
+    """Returns the report on a successful creation, otherwise raises an error"""
+    return db3.put({"key": timestamp, "ip": ip,  "hotspots": location2, "result": eid_response})

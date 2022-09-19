@@ -108,7 +108,7 @@ data = {
 }
 
 st.header(f"Case Identification")
-
+st.markdown("_This form is to be correctly filled for each **Person Tested  Positive or Negative** by your Cam Team _", unsafe_allow_html=True)
 main_container = st.container()
 
 # with st.form("entry_form"):

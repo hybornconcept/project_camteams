@@ -94,6 +94,8 @@ def is_not_a_word(word):
 
 st.header(f"Structural Drivers Notebook")
 
+
+st.markdown("_This form is to be correctly filled for each **Structural driver** identified in the Community by your CAM Team_", unsafe_allow_html=True)
 main_container = st.container()
 
 with st.form(key="entry_form", clear_on_submit=True):
