@@ -119,7 +119,7 @@ with st.form(key="entry_form", clear_on_submit=True):
         col1.selectbox("Select the CAM Team:",
                        data['cam_teams'], key="cam_teams")
         col2.selectbox("Select Type of Structural Driver:",
-                       data['structural_driver'], key="structural_driver")
+                       data['type_of_structural_driver'], key="type_of_structural_driver")
         col1.date_input(
             "Select date of birth",
             datetime.now(), key="date_of_birth")
