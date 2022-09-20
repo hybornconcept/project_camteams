@@ -50,15 +50,15 @@ def progress():
 
 # -------------- SETTINGS --------------
 collections = {
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom-Etung", "Akamkpa2",    "Akpabuyo", "Calabar South",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal 2", "Odukpani 1"],
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal", "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'name_of_structural_driver': '',
     'residence_area': ['-', 'Urban', 'Rural'],
     'client_load': '',
 
-    'focal_person': '',
+    'key_person': '',
     'phone_number': '',
     'entry': ['-', 'Retrospective', 'Current'],
     'address': '',
@@ -115,7 +115,7 @@ with st.form(key="entry_form", clear_on_submit=True):
                           min_value=0, key="client_load")
 
         col2.text_input(
-            "Full name of focal person", key="focal_person", placeholder="John Doe")
+            "Full name of Owner/Key person", key="key_person", placeholder="John Doe")
         col1.text_input(
             "Phone No. of focal person", key="phone_number", placeholder="080xxxxxxxx")
 

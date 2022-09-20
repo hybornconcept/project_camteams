@@ -73,8 +73,8 @@ def progress():
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 data = {
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom-Etung", "Akamkpa2",    "Akpabuyo", "Calabar South",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal 2", "Odukpani 1"],
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal", "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'date_of_birth': '',
@@ -108,7 +108,8 @@ data = {
 }
 
 st.header(f"Case Identification")
-st.markdown("_This form is to be correctly filled for each **Person Tested  Positive or Negative** by your Cam Team _", unsafe_allow_html=True)
+st.markdown("_This form is to be correctly filled for each **Person Tested Positive or Negative** by your Cam Team_", unsafe_allow_html=True)
+
 main_container = st.container()
 
 # with st.form("entry_form"):
@@ -122,7 +123,7 @@ with st.form(key="entry_form", clear_on_submit=True):
                        data['type_of_structural_driver'], key="type_of_structural_driver")
         col1.date_input(
             "Select date of birth",
-            datetime.now(), key="date_of_birth")
+            datetime.now(), key="date_of_birth", min_value=datetime.date(1930, 1, 1), max_value=datetime.now())
 
         col2.selectbox("Select Testing Modality:",
                        data['testing_modality'], key="testing_modality")

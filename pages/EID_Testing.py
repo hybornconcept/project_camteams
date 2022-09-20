@@ -34,8 +34,6 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 # ----------------------------------------------------------------Get Geolocation--------------------------
 location = get_geolocation('Get location')
 
-# ----------------------------------------------------------------Get IP--------------------------
-
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -74,7 +72,8 @@ listed = ["-", "No", "Yes"]
 data = {
     'Hospital_No': "",
     'facility':   "",
-    'cam_teams': ["-", "Akamkpa 1", "Akpabuyo 1", "Bakassi", "Ikom-Etung", "Akamkpa 2", "Akpabuyo 2", "Calabar South", "Obubra", "Yakurr", "Abi-biase", "Boki", "Calabar Municipal 1", "Calabar Municipal 2", "Odukpani 1", "Odukpani 2"],
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal", "Odukpani"],
     'residence_LGA': '',
     'vaccinated': listed,
     'recency_status': ["-", "Not Done", "Recent Infection", "Long-Term Infection"],
@@ -96,12 +95,14 @@ data = {
     'prophylaxis': listed,
     'EID_sampling': listed,
     'date_of_sampling': '',
-    'comment': ''
+    'address': '',
+    'med_history_comements': ''
 }
 
 st.header(f"PMTCT EID Identification")
 
 st.markdown("_This form is specifically for **HIV Positive Pregnant Client** identified both in the community and Facility_", unsafe_allow_html=True)
+
 
 main_container = st.container()
 
@@ -178,7 +179,7 @@ with st.form(key="entry_form", clear_on_submit=True):
             eid_response = {key: str(st.session_state[key]) if i < 14 else "" for i, key in enumerate(
                 list(data.keys()))}
             for key in list(eid_response.keys())[:13]:
-                if (is_not_a_word(str(st.session_state[key])) or str(st.session_state[key]) == todays_date):
+                if (is_not_a_word(str(st.session_state[key]))):
                     st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                     st.stop()
@@ -187,7 +188,7 @@ with st.form(key="entry_form", clear_on_submit=True):
             eid_response = {key: str(st.session_state[key])
                             for key in list(data.keys())}
             for key in list(eid_response.keys()):
-                if (is_not_a_word(str(st.session_state[key])) or str(st.session_state[key]) == todays_date):
+                if (is_not_a_word(str(st.session_state[key]))):
                     st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                     st.stop()
