@@ -123,7 +123,7 @@ with st.form(key="entry_form", clear_on_submit=True):
                        data['type_of_structural_driver'], key="type_of_structural_driver")
         col1.date_input(
             "Select date of birth",
-            datetime.now(), key="date_of_birth", min_value=datetime.date(1930, 1, 1), max_value=datetime.now())
+            datetime.now(), key="date_of_birth", max_value=datetime.now())
 
         col2.selectbox("Select Testing Modality:",
                        data['testing_modality'], key="testing_modality")
