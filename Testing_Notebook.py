@@ -73,8 +73,8 @@ def progress():
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 data = {
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal", "Odukpani"],
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South", "Calabar Municipal 2"
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal 1", "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'date_of_birth': '',

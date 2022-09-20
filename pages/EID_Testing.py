@@ -72,7 +72,7 @@ listed = ["-", "No", "Yes"]
 data = {
     'Hospital_No': "",
     'facility':   "",
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South",
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South", "Calabar Municipal 2"
                   "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal", "Odukpani"],
     'residence_LGA': '',
     'vaccinated': listed,
