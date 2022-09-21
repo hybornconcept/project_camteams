@@ -1,4 +1,5 @@
 from datetime import datetime
+from multiprocessing.sharedctypes import Value
 import streamlit as st  # pip install streamlit
 import time
 import socket
@@ -70,14 +71,18 @@ def progress():
     st.success("Response Submitted Successfully")
 
 
+listyear = [str(i) for i in list(range(1940, 2023, 1))]
+listyear.append("-")
+
+
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 data = {
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa2",    "Akpabuyo", "Calabar South", "Calabar Municipal 2"
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung", "Calabar Municipal 1", "Odukpani"],
+    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa 2",    "Akpabuyo", "Calabar South", "Calabar Municipal 1", "Calabar Municipal 2",
+                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung",  "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
-    'date_of_birth': '',
+    'year_of_birth': listyear,
     'testing_modality': ["-", "Social Network Testing", "Sexual Network Testing", "Geneology Testing", "Self-Testing (HIVST)",
                          "Targetted Testing", "Voluntary Counselling Testing (VCT)", "PMTCT Testing"],
     'sex': ["-", "Male", "Female"],
@@ -89,10 +94,8 @@ data = {
     # ---
     'client_code': '',
     'phone': '',
-
-
     'residence_LGA': '',
-    'last_test': ["-", "<1 month", "1-3 months", "4-6 months", "> 6 months"],
+    'last_test': ["-", "<1 month", "1-3 months", "4-6 months", "> 6 months", "Never"],
     'occupation': '',
     'education_level': ["-", "Not Educated", "Primary",
                         "Secondary", "Tertiary", "Post-Graduate"],
@@ -100,7 +103,7 @@ data = {
                        "Widowed", "Seperated", "Cohabiting", "Others"],
     'vaccinated': listed,
     'linked': listed,
-    'income_level': ['less than #30,000', 'btw #30,000- #100,000', 'btw #100,000- #500,000', '#500,000 and above'],
+    'income_level': ["-", "No Income", 'less than #30,000', 'btw #30,000- #100,000', 'btw #100,000- #500,000', '#500,000 and above'],
     'No_of_child_enumerated': '',
     'recency_status': ["-", "Not Done", "Recent Infection", "Long-Term Infection"],
     'address': '',
@@ -121,9 +124,9 @@ with st.form(key="entry_form", clear_on_submit=True):
                        data['cam_teams'], key="cam_teams")
         col2.selectbox("Select Type of Structural Driver:",
                        data['type_of_structural_driver'], key="type_of_structural_driver")
-        col1.date_input(
-            "Select date of birth",
-            datetime.now(), key="date_of_birth", max_value=datetime.now())
+        col1.selectbox(
+            "Select year of birth", reversed(listyear),
+            key="year_of_birth")
 
         col2.selectbox("Select Testing Modality:",
                        data['testing_modality'], key="testing_modality")
