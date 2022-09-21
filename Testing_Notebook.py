@@ -134,7 +134,7 @@ with st.form(key="entry_form", clear_on_submit=True):
         col2.selectbox("Select Risk Level of Client:",
                        data['risk_level'], key="risk_level")
 
-        col1.number_input("No.of Social Networks/ Partners Elicited", value=0, step=1, min_value=0,
+        col1.number_input("No.of Partners Elicited from Pretest ICT offered", value=0, step=1, min_value=0,
                           key='elicited')
 # social networks offered yes/no
 # social networks offered numbers
