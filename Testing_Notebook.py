@@ -1,5 +1,4 @@
 from datetime import datetime
-from multiprocessing.sharedctypes import Value
 import streamlit as st  # pip install streamlit
 import time
 import socket
@@ -79,7 +78,7 @@ listyear.append("-")
 listed = ["-", "No", "Yes"]
 data = {
     'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa 2",    "Akpabuyo", "Calabar South", "Calabar Municipal 1", "Calabar Municipal 2",
-                  "Obubra", "Yakurr", "Abi-biase", "Boki", "Etung",  "Odukpani"],
+                  "Obubra", "Yakurr", "Abi", "biase", "Boki", "Etung",  "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'year_of_birth': listyear,
@@ -111,7 +110,8 @@ data = {
 }
 
 st.header(f"CAM Team Testing Notebook")
-st.markdown("_This form is to be correctly filled for each **Person Tested Positive or Negative** by your Cam Team_", unsafe_allow_html=True)
+st.markdown("_This form is to be correctly filled for each **Person Tested** by your Cam Team_",
+            unsafe_allow_html=True)
 
 main_container = st.container()
 
@@ -123,7 +123,7 @@ with st.form(key="entry_form", clear_on_submit=True):
         col1.selectbox("Select the CAM Team:",
                        data['cam_teams'], key="cam_teams")
         col2.selectbox("Select Type of Structural Driver:",
-                       data['type_of_structural_driver'], key="type_of_structural_driver")
+                       data['type_of_structural_ driver'], key="type_of_structural_driver")
         col1.selectbox(
             "Select year of birth", reversed(listyear),
             key="year_of_birth")
