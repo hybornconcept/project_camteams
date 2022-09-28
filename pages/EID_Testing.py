@@ -70,30 +70,26 @@ def progress():
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 data = {
-    'Hospital_No': "",
-    'facility':   "",
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa 2",    "Akpabuyo", "Calabar South", "Calabar Municipal 1", "Calabar Municipal 2",
-                  "Obubra", "Yakurr", "Abi", "biase", "Boki", "Etung",  "Odukpani"],
+    'Client_Hospital_No': "",
+    'type_of_structural_driver': ["-", "Supported Site", "Unsupported Site", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement", "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
+    'name_of_structural_driver': '',
+
     'residence_LGA': '',
     'vaccinated': listed,
     'recency_status': ["-", "Not Done", "Recent Infection", "Long-Term Infection"],
 
-    'delivery_location': ["-", "TBA", "Healing home", 'Unsupported site', "Supported facility",
-                          "Prayer House",  "Health-Center", "Private Hospital", "Others"],
-    "delivery_facility": '',
-    'Last_menstrul_Period': ["-", "<1 month", "1-3 months", "4-6 months", "> 6 months"],
-    'trimester': ['1st Trimester', '2nd Trimester', '3rd Trimester'],
+    'Last_menstrul_Period': '',
     'marital_status': ["-", "Married", "Single", "Divorced",
                        "Widowed", "Seperated", "Cohabiting", "Others"],
-    'EDD': '',
-    'viral_load': ["-", "No Viral load done" "Suppressed", "Unsurppressed"],
+
+    'viral_load_Status': ["-", "Not Yet Eligible", "Eligible but sample Yet to be collected", "Suppressed VL result", "Unsurppressed VL result"],
 
     # 'Regimen': '',
     'delivery_outcome': ["-", "child is alive", "child died"],
     # ---
     'child_risk_level': ["-", "High", "Low"],
     'prophylaxis': listed,
-    'EID_sampling': listed,
+    'DBS_collected': listed,
     'date_of_sampling': '',
     'address': '',
     'med_history_comements': ''
@@ -112,34 +108,25 @@ with st.form(key="entry_form", clear_on_submit=True):
 
         col1, col2 = st.columns(2)
         # Tested Clients
-        col1.text_input("Hospital_No",
-                        key="Hospital_No")
-        col2.text_input("Select the Supporting Site:",
-                        key="facility")
-        col1.selectbox("Select the CAM TEAM:",
-                       data['cam_teams'], key="cam_teams")
-
+        col1.text_input("Client's Hospital_No",
+                        key="Client_Hospital_No")
+        col2.selectbox("Type of structural driver client was Identified",
+                       data['type_of_structural_driver'], key='type_of_structural_driver')
+        col1.text_input("Name of the Structural driver",
+                        key="name_of_structural_driver")
         col2.text_input("LGA of Residence:", key="residence_LGA")
         col1.selectbox("Client Vacination:", data['vaccinated'],
                        key="vaccinated")
         col2.selectbox("HIV Recency Status:",
                        data['recency_status'], key="recency_status")
-        col1.selectbox("Site booked for delivery:",
-                       data['delivery_location'], key="delivery_location")
-        col2.text_input("Name of the Site:",
-                        key="delivery_facility")
 
-        col1.selectbox("Last menstrul Period LMP:",
-                       data['Last_menstrul_Period'], key="Last_menstrul_Period")
-        col2.selectbox("Select the Trimester:",
-                       data['trimester'], key="trimester")
+        col1.date_input("Last menstrul Period LMP:",
+                        datetime.now(), key="Last_menstrul_Period")
+
         col1.selectbox("Client Marital Status:",
                        data['marital_status'], key="marital_status")
-        col2.selectbox("Last viral load result:",
-                       data['viral_load'], key="viral_load")
-        col1.date_input(
-            "Expected Delivery date",
-            datetime.now(), key="EDD")
+        col2.selectbox("Viral Load Status:",
+                       data['viral_load_Status'], key="viral_load_Status")
 
         # col2.text_input("Regimen of the client:",
         #                 key="Regimen"),
@@ -159,7 +146,7 @@ with st.form(key="entry_form", clear_on_submit=True):
                                data['prophylaxis'], key="prophylaxis")
 
                 pos1.selectbox("DBS collected:",
-                               data['EID_sampling'], key="EID_sampling")
+                               data['DBS_collected'], key="DBS_collected")
 
                 pos2.date_input("Date DBS was collected",
                                 datetime.now(), key="date_of_sampling")
@@ -176,10 +163,10 @@ with st.form(key="entry_form", clear_on_submit=True):
         # ----------------- Validate if Negative-----------------------------
         if str(st.session_state["delivery_outcome"]) != "child is alive":
 
-            eid_response = {key: str(st.session_state[key]) if i < 14 else "" for i, key in enumerate(
+            eid_response = {key: str(st.session_state[key]) if i < 10 else "" for i, key in enumerate(
                 list(data.keys()))}
-            for key in list(eid_response.keys())[:13]:
-                if (is_not_a_word(str(st.session_state[key]))):
+            for key in list(eid_response.keys())[:10]:
+                if (is_not_a_word(str(st.session_state[key])) or str(st.session_state[key]) == todays_date):
                     st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                     st.stop()
