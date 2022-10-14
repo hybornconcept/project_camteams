@@ -1,5 +1,5 @@
 import streamlit as st  # pip install streamlit
-import glob
+# import glob
 from streamlit_js_eval import get_geolocation
 import time
 import socket
@@ -49,16 +49,19 @@ def progress():
 
 
 # -------------- SETTINGS --------------
+listed = ["-", "No", "Yes"]
 collections = {
     'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa 2",    "Akpabuyo", "Calabar South", "Calabar Municipal 1", "Calabar Municipal 2",
                   "Obubra", "Yakurr", "Abi", "biase", "Boki", "Etung",  "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'name_of_structural_driver': '',
-    'residence_area': ['-', 'Urban', 'Rural'],
+    'residence_area': ['-', 'Urban', 'Semi-Urban', 'Rural'],
     'client_load': '',
-
     'key_person': '',
+    'skill_level': ['-', 'Trained Healthcare Worker', 'Non-Healthcare Worker'],
+
+    'client_referals': listed,
     'phone_number': '',
     'entry': ['-', 'Retrospective', 'Current'],
     'address': '',
@@ -116,6 +119,10 @@ with st.form(key="entry_form", clear_on_submit=True):
 
         col2.text_input(
             "Full name of Owner/Key person", key="key_person", placeholder="John Doe")
+        col1.selectbox("Skill Level of Owner/Key person:",
+                       collections['skill_level'], key="skill_level")
+        col2.selectbox("Are Clients referred to health Institutions?",
+                       collections['client_referals'], key="client_referals")
         col1.text_input(
             "Phone No. of focal person", key="phone_number", placeholder="080xxxxxxxx")
 
@@ -137,10 +144,10 @@ with st.form(key="entry_form", clear_on_submit=True):
     if submitted:
         # ----------------- Validatation-----------------------------
         if str(st.session_state["entry"]) != "Retrospective":
-            hotspots = {key: str(st.session_state[key]) if i < 9 else "" for i, key in enumerate(
+            hotspots = {key: str(st.session_state[key]) if i < 11 else "" for i, key in enumerate(
                 list(collections.keys()))}
 
-            for key in list(collections.keys())[:8]:
+            for key in list(collections.keys())[:11]:
 
                 if (is_not_a_word(str(st.session_state[key]))):
                     st.error("The input for " + key.upper() +
