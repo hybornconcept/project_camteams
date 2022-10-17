@@ -40,14 +40,6 @@ hide_st_style = """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
-def progress():
-    my_bar = st.progress(0)
-    for p in range(100):
-        time.sleep(0.02)
-        my_bar.progress(p+1)
-    st.success("Response Submitted Successfully")
-
-
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 collections = {
@@ -91,8 +83,16 @@ def is_not_a_word(word):
     """ This function checks if given string is empty
      or contain only shite spaces"""
     list = '!@#$%^&*()-+?_=,<>/'
-    if (word.strip() == '' or word in list):
+    if (bool(word) == False or word in list):
         return True
+
+
+def progress():
+    my_bar = st.progress(0)
+    for p in range(100):
+        time.sleep(0.02)
+        my_bar.progress(p+1)
+    st.success("Response Submitted Successfully")
 
 
 st.header(f"Structural Drivers Notebook")
@@ -134,18 +134,16 @@ with st.form(key="entry_form", clear_on_submit=True):
         if str(st.session_state["entry"]) == "Retrospective":
             with placeholder.container():
                 pos1, pos2 = st.columns(2)
-                pos1.number_input("GPS coordinate, Longitude:",
-                                  key="longitude", value=0.000)
-                pos2.number_input("GPS coordinate, Lattitude:", key="latitude",
-                                  value=0.000)
+                pos1.number_input("GPS coordinate, Longitude:", format="%.5f",
+                                  key="longitude", value=0.0000)
+                pos2.number_input("GPS coordinate, Lattitude:", key="latitude", format="%.5f",
+                                  value=0.0000)
 
     submitted = st.form_submit_button("Submit Response")
 
     if submitted:
         # ----------------- Validatation-----------------------------
         if str(st.session_state["entry"]) != "Retrospective":
-            hotspots = {key: str(st.session_state[key]) if i < 11 else "" for i, key in enumerate(
-                list(collections.keys()))}
 
             for key in list(collections.keys())[:11]:
 
@@ -158,24 +156,40 @@ with st.form(key="entry_form", clear_on_submit=True):
                         st.error("The input for " + key.upper() +
                                  " is Incorrect or Empty")
                         st.stop()
-                if key == "client_load":
+                elif key == "client_load":
                     if (len(str(st.session_state[key])) < 2 and int(st.session_state[key] == 0)):
                         st.error("The input for " + key.upper() +
                                  " is Incorrect or Empty")
                         st.stop()
+                else:
+                    hotspots = {key: str(st.session_state[key]) if i < 11 else "" for i, key in enumerate(
+                        list(collections.keys()))}
+
         if str(st.session_state["entry"]) == "Retrospective":
-            if (int(st.session_state["longitude"]) == 0 or int(st.session_state["latitude"]) == 0):
-                st.error("The input for Latitude/Longitude is Incorrect or Empty")
+            for key in list(collections.keys()):
+
+                if (is_not_a_word(str(st.session_state[key]))):
+                    st.error("The input for " + key.upper() +
+                             " is Incorrect or Empty")
+                    st.stop()
+            if (int(st.session_state["longitude"]) < 7 or int(st.session_state["longitude"]) > 10):
+                st.error("The input for Longitude is Incorrect or Empty")
+                st.stop()
+            if (int(st.session_state["latitude"]) < 4 or int(st.session_state["latitude"]) > 7):
+                st.error("The input for Latitude is Incorrect or Empty")
                 st.stop()
             else:
                 hotspots = {key: str(st.session_state[key])
                             for key in list(collections.keys())}
+
     # -------------------Submission-----------------------
+
         ip = get_ip()
         timestamp = location["timestamp"]
         location2 = location['coords']
         insert_driver(str(timestamp), str(ip), location2, hotspots)
         progress()
+
 
 # imgcol1, imgcol2 = st.columns(2)
 # files = [file for file in glob.glob("tools\images\*")]
