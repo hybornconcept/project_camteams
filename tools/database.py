@@ -1,6 +1,6 @@
 import streamlit as st  # pip install streamlit
 from deta import Deta
-import streamlit_authenticator as stauth
+# import streamlit_authenticator as stauth
 
 DETA_KEY = "a0336p7l_CroTiVtomMBEP96auViVaMgZeyVjX56U"
 
