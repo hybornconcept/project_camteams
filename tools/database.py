@@ -57,16 +57,16 @@ def get_period(key):
     return db4.get(key)
 
 
-usernames = ["crs001", "frank1"]
-passwords = ["admin", "admin1"]
-hashed_passwords = stauth.Hasher(passwords).generate()
+# usernames = ["crs001", "frank1"]
+# passwords = ["admin", "admin1"]
+# hashed_passwords = stauth.Hasher(passwords).generate()
 
 
-for (username, hash_password) in zip(usernames, hashed_passwords):
-    insert_user(username, hash_password)
+# for (username, hash_password) in zip(usernames, hashed_passwords):
+#     insert_user(username, hash_password)
 
 
-def fetch_all_users():
-    """Returns a dict of all users"""
-    res = db.fetch()
-    return res.items
+# def fetch_all_users():
+#     """Returns a dict of all users"""
+#     res = db.fetch()
+#     return res.items
