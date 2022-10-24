@@ -1,5 +1,6 @@
 import streamlit as st  # pip install streamlit
 from deta import Deta
+import streamlit_authenticator as stauth
 
 DETA_KEY = "a0336p7l_CroTiVtomMBEP96auViVaMgZeyVjX56U"
 
@@ -13,6 +14,7 @@ db2 = deta.Base("drivers_db")
 db3 = deta.Base("pmtct_eid_db")
 db4 = deta.Base("EID_DATABASE")
 db5 = deta.Base("POST_NATAL")
+db6 = deta.Base("users_db")
 
 
 def insert_deta(timestamp2, ip, location2, result):
@@ -35,6 +37,11 @@ def insert_post_natal(timestamp, patient_id, ip, location2, post_natal):
     return db5.put({"key": timestamp, 'patient_id': patient_id, "ip": ip,  "hotspots": location2,  "result": post_natal})
 
 
+def insert_user(username, password):
+    """Returns the user on a successful user creation, otherwise raises and error"""
+    return db6.put({"key": username, "password": password})
+
+
 def fetch_cases():
     res = db.fetch()
     return res.items
@@ -48,3 +55,18 @@ def fetch_drivers():
 def get_period(key):
     """If not found, the function will return None"""
     return db4.get(key)
+
+
+usernames = ["crs001", "frank1"]
+passwords = ["admin", "admin1"]
+hashed_passwords = stauth.Hasher(passwords).generate()
+
+
+for (username, hash_password) in zip(usernames, hashed_passwords):
+    insert_user(username, hash_password)
+
+
+def fetch_all_users():
+    """Returns a dict of all users"""
+    res = db.fetch()
+    return res.items

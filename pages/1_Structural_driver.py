@@ -1,5 +1,6 @@
 import streamlit as st  # pip install streamlit
 # import glob
+from streamlit_option_menu import option_menu
 from streamlit_js_eval import get_geolocation
 import time
 import socket
