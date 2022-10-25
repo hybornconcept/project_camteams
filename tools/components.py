@@ -39,37 +39,54 @@ def card_kpis(kpi, title, font):
     return formatic
 
 
-@st.cache
+# @st.cache
 def sanitize():
     # fetch data
-    # drivers = fetch_drivers()
-    # main_df = pd.DataFrame(drivers)
-    # main_df = pd.json_normalize(drivers)
-    # new_names = ([i.split('.')[1] if "." in i else i for i in main_df.columns])
-    # main_df.columns = new_names
-    # s = main_df.columns.to_series().groupby(main_df.columns)
-    # main_df.columns = np.where(s.transform('size') > 1,
-    #                            main_df.columns + s.cumcount().add(1).astype(str),
-    #                            main_df.columns)
-    # main_df['date_of_entry'] = pd.to_datetime(
-    #     main_df['key'], unit='ms').dt.date
-    # main_df = main_df.drop(['ip', 'accuracy', 'altitude',
-    #                         'altitudeAccuracy', 'heading', 'speed', 'key'], axis=1)
+    drivers = fetch_drivers()
+    main_df = pd.DataFrame(drivers)
+    main_df = pd.json_normalize(drivers)
+    new_names = ([i.split('.')[1] if "." in i else i for i in main_df.columns])
+    main_df.columns = new_names
+    s = main_df.columns.to_series().groupby(main_df.columns)
+    main_df.columns = np.where(s.transform('size') > 1,
+                               main_df.columns + s.cumcount().add(1).astype(str),
+                               main_df.columns)
+    main_df['date_of_entry'] = pd.to_datetime(
+        main_df['key'], unit='ms').dt.date
+    main_df = main_df.drop(['ip', 'accuracy', 'altitude',
+                            'altitudeAccuracy', 'heading', 'speed', 'key'], axis=1)
     # clean data
-    main_df = pd.read_csv(r"Book1.csv")
-    main_df['latitude2'].fillna(value=main_df['latitude1'], inplace=True)
-    main_df['longitude2'].fillna(value=main_df['longitude1'], inplace=True)
+    # main_df = pd.read_csv(r"Book1.csv")
+    # main_df = main_df.replace(r'^\s*$', np.nan, regex=True)
+    main_df['longitude2'] = main_df['longitude2'].replace(
+        r'\s+', np.nan, regex=True).replace('', np.nan)
+    main_df['latitude2'] = main_df['latitude2'].replace(
+        r'\s+', np.nan, regex=True).replace('', np.nan)
+    main_df.latitude2 = np.where(
+        main_df.latitude2.isnull(), main_df.latitude1, main_df.latitude2)
+    main_df.longitude2 = np.where(
+        main_df.longitude2.isnull(), main_df.longitude1, main_df.longitude2)
     cols = ['cam_teams', 'entry', 'residence_area',
             'type_of_structural_driver']
     main_df[cols] = main_df[cols].astype('category')
     main_df = main_df.drop(['latitude1', 'longitude1'], axis='columns').rename(
         {'latitude2': 'lat', 'longitude2': 'lon'}, axis='columns')
-    main_df['date'] = pd.to_datetime(
-        '1900-01-01') + pd.to_timedelta(main_df['date_of_entry'], 'D')
+
+    convert_dict = {
+        'lat': float,
+        'lon': float
+
+    }
+    main_df = main_df.astype(convert_dict)
+    main_df2 = main_df.loc[(main_df['lon'] > 7) & (main_df['lon'] < 10) & (
+        main_df['lat'] > 4) & (main_df['lat'] < 7)].copy()
+
+    # main_df['date'] = pd.to_datetime(
+    #     '1900-01-01') + pd.to_timedelta(main_df['date_of_entry'], 'D')
     # main_df['date'] = main_df['date_of_entry'].dt.date
-    final_df = main_df.dropna(subset=['date_of_entry'])
-    final_df.shape
-    return final_df
+    # final_df = main_df.dropna(subset=['date_of_entry'])
+    # final_df.shape
+    return main_df2
 
 
 def barchart(df, col1, col2):

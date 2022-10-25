@@ -96,7 +96,8 @@ data = {
     'Last_menstrul_Period': '',
     'marital_status': ["-", "Married", "Single", "Divorced",
                        "Widowed", "Seperated", "Cohabiting", "Others"],
-    'mamapack': '',
+    'routine_drugs': listed,
+
     'partner_HIV_status': ["-", "I dont Know", "HIV Positive", "HIV Negative"],
     'viral_load_collection': ["-", "Not Yet Eligible", "Eligible But Sample Not Collected", "Before 32 Weeks", "32 Weeks", "33 Weeks",  "34 Weeks", "35 Weeks", "36 Weeks", "After 36 Weeks"],
     'viral_load_Status': ["-", "Undetectable", "Suppressed", "Unsuppressed", "No VL result Yet"],
@@ -106,9 +107,11 @@ data = {
     # Child
     'delivery_location': ["-", "TBA", "Supported Site", "Unsupported Health-Center", "Private Hospital", "Delivered at home", "Prayer House", "Unknown"],
     'name_of_delivery_site': "",
-    'delivery_method': ["-", "Normal Birth", "Ceasearian Section"],
+    'delivery_method': ["-", "Normal Birth", "Ceasearian Section/Assisted Delivery"],
 
     'delivery_date': '',
+    'mamapack': listed,
+    'mother_phone_number': '',
     'child_risk_level': ["-", "High", "Low"],
     'prophylaxis': ['-', 'Not Given', 'Nevirapine only', 'Nevirapine + Zidovudine'],
     'birth_weight': ['-', 'below 2.6 Kg', '2.6 Kg and above'],
@@ -143,18 +146,17 @@ if selected == "Pre-Natal Data":
         col2.selectbox("Client Categorization",
                        data['client_category'], key='client_category')
         col2.text_input("LGA of Residence:", key="residence_LGA")
-        col1.selectbox("Screened for Cervical Cancer:", data['cervical_screening'],
+        col1.selectbox("Screened for Cervical Cancer:", listed,
                        key="cervical_screening")
         col2.selectbox("HIV Recency Status:",
                        data['recency_status'], key="recency_status")
 
         col1.date_input("The first Day of your Last Menstrual Period (LMP):",
                         datetime.now(), key="Last_menstrul_Period")
-
         col1.selectbox("Marital Status:",
                        data['marital_status'], key="marital_status")
-        col2.selectbox("Was MaMaPack provided ?",
-                       listed, key="mamapack")
+        col2.selectbox("Are you taking any routine drugs (e.g. Folic acid)?",
+                       listed, key="routine_drugs")
         col1.selectbox("HIV Status of your Partner?:",
                        data['partner_HIV_status'], key="partner_HIV_status")
 
@@ -162,7 +164,7 @@ if selected == "Pre-Natal Data":
                        data['viral_load_collection'], key="viral_load_collection")
         col1.selectbox("Viral Load Status:",
                        data['viral_load_Status'], key="viral_load_Status")
-        col2.selectbox("No of Pregnacies so far:",
+        col2.selectbox("No of Pregnacies before this pregnacy:",
                        data['no_of_pregnancies'], key="no_of_pregnancies")
         col1.text_area(
             "", placeholder="Provide a Client descriptive address ...", key='address')
@@ -247,6 +249,10 @@ def show_childpage():
                                   key="name_of_delivery_site")
                 child1.date_input("Date of the Deivery:",
                                   datetime.now(), key="delivery_date")
+                child1.selectbox("Was MaMaPack provided ?",
+                                 listed, key="mamapack")
+                child2.text_input("Mothers Phone Number:",
+                                  data['mother_phone_number'], key="mother_phone_number")
                 child2.selectbox("Delivery Method:",
                                  data['delivery_method'], key="delivery_method")
 
@@ -282,10 +288,16 @@ def show_childpage():
                         st.error("The input for " + key.upper() +
                                  " is Incorrect or Empty")
                         st.stop()
+                    if key == "mother_phone_number":
+                        if (len(str(st.session_state[key])) != 11 or not(st.session_state[key].isdigit())):
+                            st.error("The input for " + key.upper() +
+                                     " is Incorrect or Empty")
+                            st.stop()
 
                     if str(st.session_state["dbs_sample_collected"]) == "No":
                         st.session_state["sample_collection_date"] = "None"
                         st.session_state["result_recieved_date"] = "None"
+
                     else:
 
                         if ((key in ('delivery_date', 'sample_collection_date', 'result_recieved_date')) and (datetime.strptime(str(st.session_state[key]), "%Y-%m-%d").date() > datetime.now().date())):

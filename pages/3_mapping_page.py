@@ -31,6 +31,7 @@ hide_st_style = """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 # ----------------------------get data-------------------
+# st.dataframe(sanitize())
 df = sanitize()
 
 # ------------Spacer function-------------------
@@ -56,7 +57,7 @@ structural_driver = st.sidebar.multiselect(
 
 # --- structural driver Client Load ------------
 average_monthly_client = st.sidebar.select_slider(
-    'Select the Client Load:', options=sorted(df['client_load'].unique()), value=max(sorted(df['client_load'].unique())))
+    'Monthly Average Visit:', options=sorted(df['client_load'].unique()), value=max(sorted(df['client_load'].unique())))
 col1, col2 = st.columns([4, 1])
 
 # ----------------------------------------------------------------  filtering the dataframe  --------------------------

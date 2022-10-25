@@ -10,7 +10,7 @@ deta = Deta(DETA_KEY)
 db = deta.Base("case_db")
 
 db2 = deta.Base("drivers_db")
-
+# CEASEARIAN SECTION /ASSISTED DELIVERY
 db3 = deta.Base("pmtct_eid_db")
 db4 = deta.Base("EID_DATABASE")
 db5 = deta.Base("POST_NATAL")
@@ -55,6 +55,10 @@ def fetch_drivers():
 def get_period(key):
     """If not found, the function will return None"""
     return db4.get(key)
+
+
+def delete_keys(key):
+    return db2.delete(key)
 
 
 # usernames = ["crs001", "frank1"]
