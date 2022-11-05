@@ -45,7 +45,7 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 listed = ["-", "No", "Yes"]
 collections = {
     'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa 2",    "Akpabuyo", "Calabar South", "Calabar Municipal 1", "Calabar Municipal 2",
-                  "Obubra", "Yakurr", "Abi", "biase", "Boki", "Etung",  "Odukpani"],
+                  "Obubra", "Yakurr", "Abi", "Biase", "Boki", "Etung",  "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'name_of_structural_driver': '',

@@ -1,15 +1,12 @@
 
 import streamlit as st  # pip install streamlit
 import time
-# from datetime import date
-# from datetime import datetime
 import socket
-from datetime import datetime
+from datetime import datetime, timedelta
 # import itertools
 from streamlit_option_menu import option_menu
-from tools.database import insert_eid
-from tools.database import insert_post_natal
-from tools.database import get_period
+from tools.database import insert_eid, insert_post_natal, get_period, delete_eid, get_eid_key, deleter_pos_natals, fetch_post_natals
+import json
 from streamlit_js_eval import get_geolocation
 
 
@@ -64,6 +61,8 @@ def get_ip():
 
 # ----------------------------------------------------------------REMOVE BLANK AND NONE WORD--------------------------
 
+# validation  function
+
 
 def is_not_a_word(word):
     """ This function checks if given string is empty
@@ -72,13 +71,24 @@ def is_not_a_word(word):
     if (word is None or word in list):
         return True
 
+# progess bar function
 
-def progress():
+
+def progress(message):
     my_bar = st.progress(0)
     for p in range(100):
         time.sleep(0.002)
         my_bar.progress(p+1)
-    st.success("Response Submitted Successfully")
+    st.success(message)
+
+# function to get unique id from post_nata_database
+
+
+def process_natals(identifier):
+    variable = fetch_post_natals()
+    lister = [val for dic in variable for val in
+              dic.values() if dic['patient_id'] == identifier]
+    return lister[2]
 
 
 # -------------- SETTINGS --------------
@@ -91,7 +101,7 @@ data = {
     'enrollmenent_setting': ["-", "Community", "Facility"],
     'client_category': ["-", "Facility Based Client", "TBA", "Healing home", "Prayer House", "PMV", "Unsupported Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'residence_LGA': '',
-    'cervical_screening': listed,
+    'syphlilis_testing': listed,
     'recency_status': ["-", "Not Done", "Recent Infection", "Long-Term Infection"],
     'Last_menstrul_Period': '',
     'marital_status': ["-", "Married", "Single", "Divorced",
@@ -108,6 +118,7 @@ data = {
     'delivery_location': ["-", "TBA", "Supported Site", "Unsupported Health-Center", "Private Hospital", "Delivered at home", "Prayer House", "Unknown"],
     'name_of_delivery_site': "",
     'delivery_method': ["-", "Normal Birth", "Ceasearian Section/Assisted Delivery"],
+
 
     'delivery_date': '',
     'mamapack': listed,
@@ -146,8 +157,8 @@ if selected == "Pre-Natal Data":
         col2.selectbox("Client Categorization",
                        data['client_category'], key='client_category')
         col2.text_input("LGA of Residence:", key="residence_LGA")
-        col1.selectbox("Screened for Cervical Cancer:", listed,
-                       key="cervical_screening")
+        col1.selectbox("Tested for Syplilis:", listed,
+                       key="syphlilis_testing")
         col2.selectbox("HIV Recency Status:",
                        data['recency_status'], key="recency_status")
 
@@ -196,11 +207,21 @@ if selected == "Pre-Natal Data":
             # identity = dict(list(eid_response.items())[:2])
             patient_id = eid_response['facility'] + \
                 str(eid_response['hospital_No']).lower()
-            a_dict = {key: eid_response[key] for key in eid_response if key not in (
-                'facility', 'hospital_No')}
-            insert_eid(patient_id, str(timestamp),
-                       str(ip), location2, a_dict)
-            progress()
+            eid_response['EDD'] = str((datetime.strptime(str(
+                st.session_state['Last_menstrul_Period']), '%Y-%m-%d') + timedelta(days=280)).date())
+            # a_dict = {key: eid_response[key] for key in eid_response if key not in (
+            #     'facility', 'hospital_No')}
+            identifier = get_eid_key(patient_id)
+            if identifier:
+                delete_eid(identifier['key'])
+                insert_eid(patient_id, str(timestamp),
+                           str(ip), location2, eid_response)
+
+                progress("Response Updated Successfully")
+            else:
+                insert_eid(patient_id, str(timestamp),
+                           str(ip), location2, eid_response)
+                progress("Response Submitted Successfully")
 
 
 # --- Post-Natal Sections ---
@@ -321,10 +342,21 @@ def show_childpage():
                 ip = get_ip()
                 timestamp = location["timestamp"]
                 location2 = location['coords']
-                insert_post_natal(str(timestamp), keydata,
-                                  str(ip), location2, post_natal)
+                # updating records
+                natals_identifier = process_natals(keydata)
+                if natals_identifier:
+                    st.write(natals_identifier)
+                    deleter_pos_natals(natals_identifier)
+                    insert_post_natal(str(timestamp), keydata,
+                                      str(ip), location2, post_natal)
+                    progress("Response Updated Successfully")
+                # submit if data already exists
+                else:
 
-                progress()
+                    insert_post_natal(str(timestamp), keydata,
+                                      str(ip), location2, post_natal)
+
+                    progress("Response Submitted Successfully")
 
 
 if selected == "Post-Natal Data":
