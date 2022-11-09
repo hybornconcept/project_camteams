@@ -1,12 +1,12 @@
 from deta import Deta
 import streamlit as st
 
-# DETA_KEY = "a0336p7l_CroTiVtomMBEP96auViVaMgZeyVjX56U"
+DETA_KEY = "a0336p7l_CroTiVtomMBEP96auViVaMgZeyVjX56U"
 
-# deta = Deta(DETA_KEY)
+deta = Deta(DETA_KEY)
 
 # deployment
-deta = Deta(st.secrets['DETA_KEY'])
+# deta = Deta(st.secrets['DETA_KEY'])
 
 db = deta.Base("case_db")
 db2 = deta.Base("drivers_db")

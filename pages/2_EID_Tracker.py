@@ -88,7 +88,7 @@ def process_natals(identifier):
     variable = fetch_post_natals()
     lister = [val for dic in variable for val in
               dic.values() if dic['patient_id'] == identifier]
-    return lister[2]
+    return lister
 
 
 # -------------- SETTINGS --------------
@@ -128,7 +128,9 @@ data = {
     'birth_weight': ['-', 'below 2.6 Kg', '2.6 Kg and above'],
     'dbs_sample_collected': listed,
     'sample_collection_date': '',
+    'result_recieved': listed,
     'result_recieved_date': '',
+    'DBS_outcome': ['-', 'DBS result is Positive', 'DBS result is Negative'],
 
     'comments': ''
 }
@@ -295,13 +297,21 @@ def show_childpage():
                         pos1.date_input("Date DBS sample was collected",
                                         datetime.now(), key="sample_collection_date")
 
-                        pos2.date_input("Date DBS result recieved",
-                                        datetime.now(), key="result_recieved_date")
+                        pos2.selectbox("DBS result recieved",
+                                       data['result_recieved'], key="result_recieved")
+                        placeholder2 = st.empty()
+                        if str(st.session_state["result_recieved"]) == "Yes":
+                            with placeholder2.container():
+                                res1, res2 = st.columns(2)
+                                res1.date_input("Date DBS result recieved",
+                                                datetime.now(), key="result_recieved_date")
+                                res2.selectbox("DBS Outcome",
+                                               data['DBS_outcome'], key="DBS_outcome")
                 st.text_area(
                     "", placeholder="Any comments or birth complications ...", key='comments')
             # Every form must have a submit button.
-            submitted2 = st.form_submit_button(label="Submit Data")
-            if submitted2:
+            child_submit = st.form_submit_button(label="Submit Data")
+            if child_submit:
 
                 for key in list(list(data.keys())[16:]):
 
@@ -317,7 +327,13 @@ def show_childpage():
 
                     if str(st.session_state["dbs_sample_collected"]) == "No":
                         st.session_state["sample_collection_date"] = "None"
+                        st.session_state["result_recieved"] = "None"
                         st.session_state["result_recieved_date"] = "None"
+                        st.session_state["DBS_outcome"] = "None"
+
+                    if str(st.session_state["result_recieved"]) == "No":
+                        st.session_state["result_recieved_date"] = "None"
+                        st.session_state["DBS_outcome"] = "None"
 
                     else:
 
@@ -327,8 +343,14 @@ def show_childpage():
                             st.stop()
                         if (key == "sample_collection_date") and (datetime.strptime(str(st.session_state[key]), "%Y-%m-%d").date() > datetime.strptime(str(st.session_state['result_recieved_date']), "%Y-%m-%d").date()):
                             st.error("The input for " + key.upper() +
-                                     " is Incorrect or Empty")
+                                     " cannot be greater than RESULT RECEIVED DATE")
                             st.stop()
+
+                        if (key == "result_recieved_date") and (datetime.strptime(str(st.session_state[key]), "%Y-%m-%d").date() == datetime.strptime(str(st.session_state['sample_collection_date']), "%Y-%m-%d").date()):
+                            st.error("The input for " + key.upper() +
+                                     " cannot be the same date with SAMPLE COLLECTION DATE")
+                            st.stop()
+
                         if (key in ('sample_collection_date', 'result_recieved_date')) and (datetime.strptime(str(st.session_state[key]), "%Y-%m-%d").date() < datetime.strptime(str(st.session_state['delivery_date']), "%Y-%m-%d").date()):
                             st.error("The input for " + key.upper() +
                                      " is Incorrect or Empty")
@@ -342,14 +364,15 @@ def show_childpage():
                 ip = get_ip()
                 timestamp = location["timestamp"]
                 location2 = location['coords']
+
                 # updating records
                 natals_identifier = process_natals(keydata)
-                if natals_identifier:
-                    st.write(natals_identifier)
-                    deleter_pos_natals(natals_identifier)
+                if natals_identifier != []:
+                    deleter_pos_natals(natals_identifier[2])
                     insert_post_natal(str(timestamp), keydata,
                                       str(ip), location2, post_natal)
                     progress("Response Updated Successfully")
+
                 # submit if data already exists
                 else:
 
