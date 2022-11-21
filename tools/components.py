@@ -69,6 +69,7 @@ def sanitize():
     cols = ['cam_teams', 'entry', 'residence_area',
             'type_of_structural_driver']
     main_df[cols] = main_df[cols].astype('category')
+    main_df.cam_teams = main_df.cam_teams.str.title()
     main_df = main_df.drop(['latitude1', 'longitude1'], axis='columns').rename(
         {'latitude2': 'lat', 'longitude2': 'lon'}, axis='columns')
 
