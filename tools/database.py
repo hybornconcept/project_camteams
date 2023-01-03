@@ -71,7 +71,7 @@ def insert_user(username, name, password):
     return db6.put({"key": username, "name": name, "password": password})
 
 
-def fetch_cases():
+def fetch_natalsfetch_cases():
     res = db.fetch()
     return res.items
 

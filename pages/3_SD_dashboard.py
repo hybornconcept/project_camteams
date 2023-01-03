@@ -13,6 +13,9 @@ st.set_page_config(page_title="Dashboard",
                    page_icon=":bar_chart:",
                    layout='wide')
 
+st.markdown("""<meta charset="utf-8">""", unsafe_allow_html=True)
+st.markdown("""<meta name="viewport" content="width=device-width, initial-scale=1">""",
+            unsafe_allow_html=True)
 st.markdown("""<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
  integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">""", unsafe_allow_html=True)
 # -----------Font CDN----------------------
@@ -47,9 +50,6 @@ mainSection = st.container()
 
 
 # ------Title------------
-st.markdown("""<meta charset="utf-8">""", unsafe_allow_html=True)
-st.markdown("""<meta name="viewport" content="width=device-width, initial-scale=1">""",
-            unsafe_allow_html=True)
 
 
 # --- USER AUTHENTICATION ---
