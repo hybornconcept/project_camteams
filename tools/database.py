@@ -14,6 +14,7 @@ db3 = deta.Base("pmtct_eid_db")
 db4 = deta.Base("EID_DATABASE")
 db5 = deta.Base("POST_NATAL")
 db6 = deta.Base("users_db")
+db7= deta.Base("elicitation_db")
 
 
 def insert_user(username, name, password):
@@ -25,6 +26,9 @@ def insert_deta(timestamp2, ip, location2, result):
     """Returns the report on a successful creation, otherwise raises an error"""
     return db.put({"key": timestamp2, "ip": ip,  "hotspots": location2, "result": result})
 
+def insert_partner(timestamp2, ip, location2, result):
+    """Returns the report on a successful creation, otherwise raises an error"""
+    return db7.put({"key": timestamp2, "ip": ip,  "hotspots": location2, "result": result})
 
 def insert_driver(timestamp, ip, location2, hotspots):
     """Returns the report on a successful creation, otherwise raises an error"""
@@ -71,7 +75,7 @@ def insert_user(username, name, password):
     return db6.put({"key": username, "name": name, "password": password})
 
 
-def fetch_natalsfetch_cases():
+def fetch_cases():
     res = db.fetch()
     return res.items
 
