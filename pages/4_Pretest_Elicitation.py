@@ -24,9 +24,7 @@ hide_st_style = """
         img{height:75px;width:1500px;}
         div.row-widget.css-k008qs.epcbefy2{margin-left: 8%;}
         div.css-uc76bn.e1fqkh3o9{margin-top:-150px;}
-        #pretest-elicitation-tool{
-         margin-top: -7%;
-}
+
         
         button.css-1w1p63c.edgvbvh5{
         padding:10px 15%;
