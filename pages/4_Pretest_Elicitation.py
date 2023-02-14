@@ -382,8 +382,7 @@ with st.form(key="entry_form", clear_on_submit=True):
                 st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                 st.stop()
-   
-      
+         
         # -------------------Submission-----------------------
         ip = get_ip()
         timestamp = location["timestamp"]
