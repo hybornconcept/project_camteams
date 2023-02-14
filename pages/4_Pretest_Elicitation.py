@@ -23,7 +23,7 @@ hide_st_style = """
             <style>
         img{height:75px;width:1500px;}
         div.row-widget.css-k008qs.epcbefy2{margin-left: 8%;}
-        div.css-uc76bn.e1fqkh3o9{margin-top:-150px;}
+      
 
         
         button.css-1w1p63c.edgvbvh5{
