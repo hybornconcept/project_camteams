@@ -23,9 +23,10 @@ hide_st_style = """
             <style>
         img{height:75px;width:1500px;}
         div.row-widget.css-k008qs.epcbefy2{margin-left: 8%;}
-      
-
-        
+        div.css-zt5igj.e16nr0p32{
+            margin-top: 4%;
+        }
+          
         button.css-1w1p63c.edgvbvh5{
         padding:10px 15%;
         background-color:#58868D;
