@@ -88,16 +88,16 @@ year = int(datetime.date.today().strftime("%Y"))-13
 listyear = [str(i) for i in list(range(1940, year))]
 listyear.append("-")
 
-list_elicit = [str(i) for i in list(range(1, 6))]
-list_elicit.append("-")
+list_elicit = [str(i) for i in list(range(0, 6))]
+list_elicit.insert(0, "-")
 
 
 
 # -------------- SETTINGS --------------
 listed = ["-", "No", "Yes"]
 data = {
-    'cam_teams': ["-", "Akamkpa 1", "Bakassi", "Ikom", "Akamkpa 2",    "Akpabuyo", "Calabar South", "Calabar Municipal 1", "Calabar Municipal 2",
-                  "Obubra", "Yakurr", "Abi", "biase", "Boki", "Etung",  "Odukpani"],
+    'cam_teams': ["-", "Akamkpa 1",  "Ikom", "Akamkpa 2", "Calabar Municipal 1", "Calabar Municipal 2",
+                   "Boki",  "Odukpani"],
     'type_of_structural_driver': ["-", "TBA", "Healing home", "Traditional Bone-Setter", "Plantation", "Settlement",
                                   "Prayer House", "PMV", "Health-Center", "Private Hospital", "Pharmacy", "Laboratory", "Others"],
     'index_year_of_birth': listyear,
@@ -204,7 +204,7 @@ with st.form(key="entry_form", clear_on_submit=True):
                        data['index_testing_modality'], key="index_testing_modality")
         index1.selectbox("Select the Sex:", data['sex_of_index'], key="sex_of_index")
 
-        index2.selectbox("Number of Partners Elicited from Index",reversed(list_elicit),
+        index2.selectbox("Number of Partners Elicited from Index",list_elicit,
                           key='index_partners_elicited')
        
        
@@ -369,8 +369,9 @@ with st.form(key="entry_form", clear_on_submit=True):
     if submitted:
         elicited=int(st.session_state["index_partners_elicited"])
         if int(st.session_state["index_partners_elicited"]) < 1:
-            st.error("The number of Partners Elicied from Index must be Greater than 0")
-            st.stop()
+            st.warning("Response Submitted, Please note No Partner was Elicited.")
+
+            # st.stop()
         elicited=int(st.session_state["index_partners_elicited"])
           
         result = {key: str(st.session_state[key]) if i < ((elicited+1)*10)+1 else "" for i, key in enumerate(
@@ -382,7 +383,8 @@ with st.form(key="entry_form", clear_on_submit=True):
                 st.error("The input for " + key.upper() +
                              " is Incorrect or Empty")
                 st.stop()
-         
+   
+      
         # -------------------Submission-----------------------
         ip = get_ip()
         timestamp = location["timestamp"]
